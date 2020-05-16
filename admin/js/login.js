@@ -1,12 +1,12 @@
 $(function () {
     $('.input_sub').on('click', function (e) {
         e.preventDefault()
-        console.log(123);
 
         var username = $('.input_txt').val()
         var password = $('.input_pass').val()
         if ($.trim(username) == '' || $.trim(password) == '') {
-            alert('帐号或者密码不能为空')
+            $('.modal').modal('show')
+            $('.modal-body').text('帐号或者密码不能为空,请重新输入...')
             return
         }
         $.ajax({
@@ -17,11 +17,15 @@ $(function () {
                 password: password
             },
             success: function (res) {
+                console.log(res);
+                $('.modal').modal('show')
+                $('.modal-body p').text(res.msg)
                 if (res.code == 200) {
                     //跳转首页
-                    window.location.href = './index.html';
-                } else {
-                    alert(res.msg);
+                    $('.modal').on('hidden.bs.modal', function (e) {
+                        localStorage.setItem('token', res.token)
+                        window.location.href = './index.html';
+                    })
                 }
             }
         })
